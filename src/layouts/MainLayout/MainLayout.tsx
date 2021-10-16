@@ -1,5 +1,5 @@
-const MainLayout: React.FC = () => {
-  return <div>Mainlayout</div>
+const MainLayout: React.FC = ({ children }) => {
+  return <div>{children}</div>
 }
 
 export default MainLayout
