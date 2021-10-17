@@ -10,36 +10,36 @@ export const navbarList = [
   {
     icon: brandImg,
     to: '/brand',
-    display: 'Thương hiệu',
+    display: 'Brand',
   },
   {
     icon: eventImg,
     to: '/event',
-    display: 'Sự kiện',
+    display: 'Event',
   },
   {
     icon: orderImg,
     to: '/order',
-    display: 'Đơn hàng',
+    display: 'Order',
   },
   {
     icon: productImg,
     to: '/product',
-    display: 'Sản phẩm',
+    display: 'Product',
   },
   {
     icon: usersImg,
     to: '/user',
-    display: 'Người dùng',
+    display: 'User',
   },
   {
     icon: statisticImg,
     to: '/statistic',
-    display: 'Thống kê',
+    display: 'Statistic',
   },
   {
     icon: profileImg,
     to: '/profile',
-    display: 'Hồ sơ',
+    display: 'Profile',
   },
 ]
