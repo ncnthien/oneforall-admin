@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .convert-to-cyan {
+    filter: invert(79%) sepia(58%) saturate(2663%) hue-rotate(146deg)
+      brightness(97%) contrast(93%);
+  }
+}

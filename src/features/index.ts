@@ -1,0 +1,7 @@
+export { default as Brand } from 'features/Brand'
+export { default as Event } from 'features/Event'
+export { default as Order } from 'features/Order'
+export { default as Product } from 'features/Product'
+export { default as Profile } from 'features/Profile'
+export { default as Statistic } from 'features/Statistic'
+export { default as User } from 'features/User'
