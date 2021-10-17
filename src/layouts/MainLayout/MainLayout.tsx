@@ -5,9 +5,7 @@ const MainLayout: React.FC = ({ children }) => {
     <div className='flex'>
       <Navbar />
       <div className='bg-gray-100 flex-grow'>
-        <div className='flex items-center justify-center w-full h-full p-4'>
-          <div className='bg-white w-full h-full rounded-t-2xl'>{children}</div>
-        </div>
+        <div className='w-full h-full p-4'>{children}</div>
       </div>
     </div>
   )
