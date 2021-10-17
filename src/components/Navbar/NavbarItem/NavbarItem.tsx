@@ -9,7 +9,7 @@ const NavbarItem: React.FC<NavbarItemProps> = ({
   onClick,
 }) => {
   const activeLinkClass =
-    'bg-gray-100 text-primary-400 font-semibold rounded-l-full'
+    'bg-gray-100 text-cyan-400 font-semibold rounded-l-full'
   const activeImgClass = 'convert-to-cyan'
 
   return (
