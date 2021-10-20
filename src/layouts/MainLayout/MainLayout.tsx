@@ -7,7 +7,7 @@ const MainLayout: React.FC = ({ children }) => {
         <Navbar />
       </div>
       <div className='bg-gray-100 w-10/12'>
-        <div className='w-full h-full p-4'>{children}</div>
+        <div className='w-full h-full p-12'>{children}</div>
       </div>
     </div>
   )
