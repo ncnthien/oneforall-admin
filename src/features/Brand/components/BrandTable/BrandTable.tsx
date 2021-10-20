@@ -1,31 +1,55 @@
 import { BrandTableProps } from 'features/Brand/interface'
 import { ReadMore } from 'features/Brand/components'
 import { Link } from 'react-router-dom'
+import { swal } from 'helper'
 
-const BrandTable: React.FC<BrandTableProps> = ({ brands }) => {
+const BrandTable: React.FC<BrandTableProps> = ({ brands, deleteBrand }) => {
   const seeMoreText = 'See more'
   const seeLessText = 'See less'
 
+  const handleRemoveButtonClick =
+    (brandId: string, brandName: string) => () => {
+      swal
+        .fire({
+          title: `Are you sure to delete brand ${brandName}`,
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete it!',
+        })
+        .then(async result => {
+          if (result.isConfirmed) {
+            deleteBrand(brandId, brandName)
+          }
+        })
+    }
+
   const renderTableData = (): JSX.Element[] => {
-    return brands.map(brand => (
-      <tr key={brand._id} className='text-center border-b-2 min-w-max'>
-        <td className='w-2/12'>
-          <img src={brand.logo} alt={brand.name} className='w-20 inline py-1' />
+    return brands.map(({ _id, logo, name, summary, value }) => (
+      <tr key={_id} className='text-center border-b-2 min-w-max'>
+        <td className='w-2/12 py-2'>
+          <img src={logo} alt={name} className='w-20 inline' />
         </td>
-        <td className='w-2/12 py-1'>{brand.name}</td>
-        <td className='w-6/12 text-left py-1'>
+        <td className='w-2/12 py-2'>{name}</td>
+        <td className='w-6/12 text-left py-2'>
           <ReadMore more={seeMoreText} less={seeLessText} lines={1}>
-            {brand.summary}
+            {summary}
           </ReadMore>
         </td>
-        <td className='w-2/12 py-1'>
+        <td className='w-2/12 py-2'>
           <Link
-            to='/brand'
+            to={{
+              pathname: `/brand/${value}`,
+              state: { _id },
+            }}
             className='bg-cyan-400 text-white rounded py-2 px-3 inline-block mr-2 text-sm hover:bg-cyan-500 transition-all'
           >
-            Update
+            Detail
           </Link>
-          <button className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'>
+          <button
+            onClick={handleRemoveButtonClick(_id, name)}
+            className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'
+          >
             Remove
           </button>
         </td>
