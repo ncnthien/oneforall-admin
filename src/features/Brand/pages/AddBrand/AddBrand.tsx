@@ -1,8 +1,4 @@
-import {
-  convertToBase64,
-  removeTag,
-  checkFalsyKey,
-} from 'features/Brand/helper'
+import { convertToBase64, removeTag, checkFalsyKey } from 'helper'
 import { CreatingBrand } from 'features/Brand/interface'
 import { getClone, swal } from 'helper'
 import { useState } from 'react'
@@ -47,7 +43,7 @@ const AddBrand: React.FC = () => {
   }
 
   const handleAddButtonClick = async () => {
-    if (!checkFalsyKey(brand)) {
+    if (!checkFalsyKey<CreatingBrand>(brand)) {
       return swal.fire(
         'Opps!',
         'There is some fields omitted, please fill out!',
