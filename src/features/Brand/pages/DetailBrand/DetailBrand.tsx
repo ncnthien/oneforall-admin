@@ -1,6 +1,6 @@
 import brandApi from 'apis/brandApi'
 import { SubBrandTable } from 'features/Brand/components'
-import { convertToBase64, removeTag } from 'features/Brand/helper'
+import { convertToBase64, removeTag } from 'helper'
 import {
   Brand,
   LocationState,

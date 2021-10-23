@@ -1,2 +1,5 @@
 export { default as getClone } from 'helper/clone.helper'
 export { default as swal } from 'helper/swal.helper'
+export { default as convertToBase64 } from 'helper/convertToBase64.helper'
+export { default as removeTag } from 'helper/removeTag.helper'
+export { default as checkFalsyKey } from 'helper/checkFalsyKey.helper'
