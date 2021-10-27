@@ -3,7 +3,7 @@ import MainLayout from 'layouts/MainLayout/MainLayout'
 import { Switch, useRouteMatch } from 'react-router-dom'
 import PrivateRoute from 'routes/PrivateRoute'
 
-const USer: React.FC = () => {
+const User: React.FC = () => {
   const match = useRouteMatch()
 
   return (
@@ -18,4 +18,4 @@ const USer: React.FC = () => {
   )
 }
 
-export default USer
+export default User
