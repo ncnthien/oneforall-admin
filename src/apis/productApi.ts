@@ -1,6 +1,6 @@
 import axiosClient from 'apis/axiosClient'
 import { AxiosResponse } from 'axios'
-import { GetProductsData } from 'features/Product/interface'
+import { GetProductsData, Product } from 'features/Product/interface'
 
 const productApi = {
   getAll: (
@@ -12,7 +12,10 @@ const productApi = {
     }`
     return axiosClient.get(url)
   },
-
+  addProduct: (product: Omit<Product, '_id'>) => {
+    const url = '/api/admin/product'
+    return axiosClient.post(url, product)
+  },
   delete: (productId: string): Promise<AxiosResponse> => {
     const url = `/api/admin/product/${productId}/delete`
     return axiosClient.delete(url)
