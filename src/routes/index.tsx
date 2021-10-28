@@ -1,4 +1,3 @@
-import { AxiosSetupInterceptors } from 'apis/axiosClient'
 import {
   Brand,
   Event,
@@ -23,7 +22,6 @@ const Routes: React.FC = () => {
         <Route path='/statistic' component={() => <Statistic />} />
         <Route path='/user' component={() => <User />} />
         <Route path='/login' component={() => <Login />} />
-        <AxiosSetupInterceptors />
       </Switch>
     </BrowserRouter>
   )

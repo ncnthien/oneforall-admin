@@ -21,7 +21,7 @@ const Main: React.FC = () => {
     const token = localStorage.getItem(jwtTokenKey)
 
     if (token) {
-      history.push('/')
+      history.push('/brand')
     }
   }, [])
 
@@ -46,7 +46,6 @@ const Main: React.FC = () => {
     actions: FormikHelpers<LoginFormData>
   ) => {
     try {
-      console.log('aa')
       actions.setSubmitting(true)
 
       const data = { ...values } as LoginFormData
