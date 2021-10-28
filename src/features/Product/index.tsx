@@ -1,4 +1,4 @@
-import Main from 'features/Product/pages/Main/Main'
+import { Main, ProductAdd, ProductDetail } from 'features/Product/pages'
 import MainLayout from 'layouts/MainLayout/MainLayout'
 import { Switch, useRouteMatch } from 'react-router-dom'
 import PrivateRoute from 'routes/PrivateRoute'
@@ -13,7 +13,19 @@ const Product: React.FC = () => {
         exact={true}
         component={() => <Main />}
         layout={MainLayout}
-      ></PrivateRoute>
+      />
+      <PrivateRoute
+        path={`${match.url}/add`}
+        exact={true}
+        component={() => <ProductAdd />}
+        layout={MainLayout}
+      />
+      <PrivateRoute
+        path={`${match.url}/:productId`}
+        exact={true}
+        component={() => <ProductDetail />}
+        layout={MainLayout}
+      />
     </Switch>
   )
 }
