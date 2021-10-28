@@ -5,6 +5,7 @@ import 'features/Product/pages/Main/Main.css'
 import { useEffect, useState } from 'react'
 import ReactPaginate from 'react-paginate'
 import { Link } from 'react-router-dom'
+import { swal, getClone } from 'helper'
 
 const Main: React.FC = () => {
   const [totalItem, setTotalItem] = useState<number>(0)
@@ -29,8 +30,26 @@ const Main: React.FC = () => {
     setPageNumber(newPageNumber)
   }
 
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      const okStatus = 200
+      const { status } = await productApi.delete(productId)
+      if (status === okStatus) {
+        swal.fire('Deleted!', `Delete product successfully`, 'success')
+
+        const clonedProducts = getClone(products)
+        const newProducts = clonedProducts.filter(
+          product => product._id !== productId
+        )
+        setProducts(newProducts)
+      }
+    } catch (error) {
+      swal.fire('Opps!', `Delete product failed, please try again!`, 'error')
+    }
+  }
+
   return (
-    <div className='transit'>
+    <div>
       <div className='flex justify-end mb-8'>
         <Link
           to='/product/add'
@@ -39,7 +58,7 @@ const Main: React.FC = () => {
           New product
         </Link>
       </div>
-      <ProductTable products={products} />
+      <ProductTable products={products} deleteProduct={handleDeleteProduct} />
       <div className='pt-8'>
         <ReactPaginate
           pageCount={Math.ceil(totalItem / 24)}

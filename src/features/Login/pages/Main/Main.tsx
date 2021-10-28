@@ -59,6 +59,7 @@ const Main: React.FC = () => {
 
       actions.setSubmitting(false)
       history.push('/brand')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setError(error.response.data)
     }
