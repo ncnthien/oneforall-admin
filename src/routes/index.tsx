@@ -1,3 +1,4 @@
+import { AxiosSetupInterceptors } from 'apis/axiosClient'
 import {
   Brand,
   Event,
@@ -8,12 +9,13 @@ import {
   Statistic,
   User,
 } from 'features'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 
 const Routes: React.FC = () => {
   return (
     <BrowserRouter>
       <Switch>
+        <Redirect exact from='/' to='/login' />
         <Route path='/brand' component={() => <Brand />} />
         <Route path='/event' component={() => <Event />} />
         <Route path='/order' component={() => <Order />} />
@@ -23,6 +25,7 @@ const Routes: React.FC = () => {
         <Route path='/user' component={() => <User />} />
         <Route path='/login' component={() => <Login />} />
       </Switch>
+      <AxiosSetupInterceptors />
     </BrowserRouter>
   )
 }

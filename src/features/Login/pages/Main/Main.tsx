@@ -58,6 +58,7 @@ const Main: React.FC = () => {
       localStorage.setItem(jwtTokenKey, token)
 
       actions.setSubmitting(false)
+      history.push('/brand')
     } catch (error: any) {
       setError(error.response.data)
     }
