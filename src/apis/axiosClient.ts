@@ -1,41 +1,49 @@
-import axios from 'axios'
-
-const authTokenKey = 'authToken'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import queryString from 'qs'
+import { useHistory } from 'react-router-dom'
 
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
     'content-type': 'application/json',
   },
+  paramsSerializer: params => queryString.stringify(params),
 })
 
-// Handle token.
-const authToken = localStorage.getItem(authTokenKey)
+const jwtTokenKey = 'jwtToken'
 
-if (authToken) {
-  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${authToken}`
-} else {
-  axiosClient.defaults.headers.common['Authorization'] = ''
-}
+export const AxiosSetupInterceptors: React.FC = () => {
+  const history = useHistory()
 
-axiosClient.interceptors.request.use(async config => {
-  return config
-})
+  axiosClient.interceptors.request.use(async (config: AxiosRequestConfig) => {
+    const token = localStorage.getItem(jwtTokenKey) || ''
 
-axiosClient.interceptors.response.use(
-  response => {
-    return response
-  },
-  error => {
-    // Check if response is unauth or forbidden.
-    const status = error.response.status
-    if (status === 401 || status === 403) {
-      // localStorage.removeItem(authTokenKey)
-      axiosClient.defaults.headers.common['Authorization'] = ''
+    if (config.headers) {
+      config.headers['authorization'] = token
     }
 
-    throw error
-  }
-)
+    return config
+  })
+
+  axiosClient.interceptors.response.use(
+    (response: AxiosResponse) => {
+      return response
+    },
+    (error: AxiosError) => {
+      if (error.response) {
+        const { status } = error.response
+
+        if (status === 401 || status === 403) {
+          localStorage.removeItem(jwtTokenKey)
+          history.push('/login')
+        }
+
+        throw error
+      }
+    }
+  )
+
+  return null
+}
 
 export default axiosClient
