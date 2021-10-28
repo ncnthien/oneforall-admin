@@ -14,11 +14,11 @@ export interface Product {
   type: 'laptop' | 'pc' | 'accessory'
   brand: string
   subBrand: string
-  price: number
+  price: number | string
   isSale: boolean
   reducedPrice?: number
   images: string[]
-  quantity: number
+  quantity: number | string
   cpu?: Detail
   ram?: Detail
   hardDrive?: Detail
@@ -52,9 +52,11 @@ export interface SelectedItem {
   selected: number
 }
 
+export type ProductType = 'laptop' | 'pc' | 'accessory'
+
 export interface ProductBody {
   name: string
-  type: 'laptop' | 'pc' | 'accessory'
+  type: ProductType
   brand: string
   subBrand: string
   price: number

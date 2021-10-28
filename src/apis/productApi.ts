@@ -1,6 +1,6 @@
 import axiosClient from 'apis/axiosClient'
 import { AxiosResponse } from 'axios'
-import { GetProductsData } from 'features/Product/interface'
+import { GetProductsData, Product } from 'features/Product/interface'
 
 const productApi = {
   getAll: (
@@ -11,6 +11,10 @@ const productApi = {
       limit ? `&limit=${limit}` : ''
     }`
     return axiosClient.get(url)
+  },
+  addProduct: (product: Omit<Product, '_id'>) => {
+    const url = '/api/admin/product'
+    return axiosClient.post(url, product)
   },
 }
 
