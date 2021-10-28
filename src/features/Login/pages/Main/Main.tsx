@@ -37,8 +37,8 @@ const Main: React.FC = () => {
   })
 
   const LoginFormData: LoginFormData = {
-    username: '',
-    password: '',
+    username: 'admin',
+    password: 'oneforall123',
   }
 
   const handleFormSubmit = async (
