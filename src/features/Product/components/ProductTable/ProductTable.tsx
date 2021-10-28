@@ -1,7 +1,28 @@
 import { Link } from 'react-router-dom'
 import { ProductTableProps } from 'features/Product/interface'
+import { swal } from 'helper'
 
-const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
+const ProductTable: React.FC<ProductTableProps> = ({
+  products,
+  deleteProduct,
+}) => {
+  const handleDeleteProductButton =
+    (productId: string, productName: string) => () => {
+      swal
+        .fire({
+          title: `Are you sure to delete product ${productName}`,
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete it!',
+        })
+        .then(async result => {
+          if (result.isConfirmed) {
+            deleteProduct(productId)
+          }
+        })
+    }
+
   const renderTableData = (): JSX.Element[] =>
     products.map(({ images, name, quantity, _id }) => (
       <tr key={_id} className='text-center border-b-2 min-w-max'>
@@ -20,7 +41,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
           >
             Detail
           </Link>
-          <button className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'>
+          <button
+            onClick={handleDeleteProductButton(_id, name)}
+            className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'
+          >
             Remove
           </button>
         </td>
