@@ -12,6 +12,11 @@ const productApi = {
     }`
     return axiosClient.get(url)
   },
+
+  delete: (productId: string): Promise<AxiosResponse> => {
+    const url = `/api/admin/product/${productId}/delete`
+    return axiosClient.delete(url)
+  },
 }
 
 export default productApi
