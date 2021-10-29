@@ -31,7 +31,10 @@ const OrderTable: React.FC<OrderTableProps> = ({
   }
 
   const calculateTotalCost = (products: Product[]): number =>
-    products.reduce((total, product) => total + product.cost, 0)
+    products.reduce(
+      (total, product, quantity) => total + product.cost * quantity,
+      0
+    )
 
   const renderProductItems = (products: Product[]): JSX.Element[] =>
     products.map(product => <ProductItem key={product._id} product={product} />)
