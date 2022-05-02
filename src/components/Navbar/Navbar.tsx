@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
     <div className='border-r-2 border-gray-100'>
       <div className='h-screen pl-4'>
         <Link to='/' className='block my-2 ml-4 mr-8'>
-          <img src={logo} alt='Oneforall' />
+          <span className='text-cyan-400 text-2xl font-medium'>Dulichdi</span>
         </Link>
         <ul>{renderNavbarList()}</ul>
       </div>
