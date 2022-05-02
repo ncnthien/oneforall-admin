@@ -27,10 +27,9 @@ export const productSchema = Yup.object({
     }),
   description: Yup.string()
     .min(6, 'Phải ít nhất 6 kí tự')
-    .max(50, 'Không được vượt quá 50 kít tự')
     .required('Không được để trống'),
   location: Yup.string()
-    .min(6, 'Phải ít nhất 6 kí tự')
+    .min(3, 'Phải ít nhất 6 kí tự')
     .max(20, 'Không được vượt quá 20 kít tự')
     .required('Không được để trống'),
   price: Yup.number()
@@ -43,7 +42,6 @@ export const productSchema = Yup.object({
   departureTime: Yup.string().required('Không được để trống'),
   transport: Yup.string()
     .min(6, 'Phải ít nhất 6 kí tự')
-    .max(20, 'Không được vượt quá 20 kít tự')
     .required('Không được để trống'),
   availableSlot: Yup.number()
     .min(1, 'Phải ít nhất là 1 đồng')
