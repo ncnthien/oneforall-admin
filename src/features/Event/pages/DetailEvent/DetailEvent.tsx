@@ -1,37 +1,34 @@
-import { useLocation, Link, useHistory } from 'react-router-dom'
-import { LocationState, Event } from 'features/Event/interface'
-import { useEffect, useState } from 'react'
-import {
-  convertToBase64,
-  swal,
-  checkFalsyKey,
-  getClone,
-  removeTag,
-} from 'helper'
 import eventApi from 'apis/eventApi'
+import { Event, LocationState } from 'features/Event/interface'
+import { checkFalsyKey, getClone, swal } from 'helper'
+import React, { useEffect, useState } from 'react'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import { serialize } from 'object-to-formdata'
+
+const defaultUpdatingEvent: Event = {
+  _id: '',
+  images: null,
+  title: '',
+  __v: 0,
+  createdAt: '',
+  description: '',
+  updatedAt: '',
+}
 
 const DetailEvent: React.FC = () => {
   const history = useHistory()
-  const defaultUpdatingEvent: Event = {
-    _id: '',
-    banner: '',
-    title: '',
-    isActive: false,
-    url: '',
-    __v: 0,
-  }
   const { state } = useLocation<LocationState>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [event, setEvent] = useState<Event>(defaultUpdatingEvent)
   const titleMaxLength = 40
-  const urlMaxLength = 100
 
   useEffect(() => {
     const fetchDetailEvent = async () => {
       try {
-        const { data: event } = await eventApi.get(state._id)
+        const {
+          data: { data: event },
+        } = await eventApi.get(state._id)
         setEvent(event)
-        console.log(event)
       } catch (error) {
         console.log(error)
       }
@@ -44,16 +41,12 @@ const DetailEvent: React.FC = () => {
     setEvent({ ...event, [e.target.name]: e.target.value })
   }
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return
     }
 
-    const targetFile = e.target.files[0]
-    const base64Image = await convertToBase64(targetFile)
-    const newEvent = { ...event, [e.target.name]: base64Image }
-
-    setEvent(newEvent)
+    setEvent({ ...event, images: e.target.files[0] })
   }
 
   const handleUpdateButtonClick = async () => {
@@ -62,7 +55,6 @@ const DetailEvent: React.FC = () => {
     }
 
     if (!checkFalsyKey<Event>(event)) {
-      console.log(event)
       return swal.fire(
         'Opps!',
         'There is some fields omitted, please fill out!',
@@ -78,31 +70,27 @@ const DetailEvent: React.FC = () => {
       )
     }
 
-    if (event.url.length > urlMaxLength) {
-      return swal.fire(
-        'Opps!',
-        `Maximum length of url is ${urlMaxLength}`,
-        'error'
-      )
-    }
-
     try {
       setIsLoading(true)
       const okStatus = 200
-      const clonedEvent = getClone(event)
+      const clonedEvent: any = getClone(event)
 
-      // Remove tag to get only base64 string
-      clonedEvent.banner = removeTag(event.banner)
-      const { data: newEvent, status } = await eventApi.update(
-        clonedEvent._id,
-        clonedEvent
-      )
+      console.log({ clonedEvent })
+
+      clonedEvent.photos = event.images
+      delete clonedEvent.images
+
+      const formData = serialize(clonedEvent)
+
+      console.log({ formData })
+
+      const { status } = await eventApi.update(event._id, formData)
+
       setIsLoading(false)
       if (status === okStatus) {
-        setEvent(newEvent)
         const result = await swal.fire(
-          'Done!',
-          `Updating event successfully`,
+          'Xong!',
+          `Cập nhật thành công!`,
           'success'
         )
 
@@ -148,40 +136,15 @@ const DetailEvent: React.FC = () => {
               onChange={handleTextFieldChange}
             />
           </div>
-          <div>
-            <label htmlFor='url' className='inline-block mb-2'>
-              URL:
-            </label>
-            <br />
-            <input
-              type='text'
-              id='url'
-              className='border-2 border-gray-300 rounded-sm w-full px-2 focus:outline-none'
-              name='url'
-              value={event.url}
-              onChange={handleTextFieldChange}
-            />
-          </div>
         </div>
         <div className='w-8/12 flex items-center justify-center'>
-          <label htmlFor='banner' className='cursor-pointer'>
-            {event.banner ? (
-              <img src={event.banner} alt='' className='w-full' />
-            ) : (
-              <label
-                htmlFor='banner'
-                className='bg-green-400 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-500 transition-all text-sm w-60 cursor-pointer'
-              >
-                Add banner
-              </label>
-            )}
-          </label>
           <input
             type='file'
             name='banner'
             id='banner'
-            className='hidden'
+            className=''
             onChange={handleFileChange}
+            accept='image/*'
           />
         </div>
         <div className='w-full text-center mt-12'>
@@ -214,7 +177,7 @@ const DetailEvent: React.FC = () => {
                 ></path>
               </svg>
             )}
-            <span>Updating</span>
+            <span>Cập nhật</span>
           </button>
         </div>
       </div>

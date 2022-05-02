@@ -1,10 +1,15 @@
 import { Main, ProductAdd, ProductDetail } from 'features/Product/pages'
 import MainLayout from 'layouts/MainLayout/MainLayout'
+import { useEffect } from 'react'
 import { Switch, useRouteMatch } from 'react-router-dom'
 import PrivateRoute from 'routes/PrivateRoute'
 
 const Product: React.FC = () => {
   const match = useRouteMatch()
+
+  useEffect(() => {
+    console.log(`${match.url}/add`)
+  }, [])
 
   return (
     <Switch>

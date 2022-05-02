@@ -1,30 +1,35 @@
 import axiosClient from 'apis/axiosClient'
 import { AxiosResponse } from 'axios'
-import { Event, CreatingEvent } from 'features/Event/interface'
+import {
+  Event,
+  CreatingEvent,
+  EventsResponse,
+  EventResponse,
+} from 'features/Event/interface'
 
 const eventApi = {
-  getAll: (): Promise<AxiosResponse<Event[]>> => {
-    const url = '/api/admin/event'
+  getAll: (): Promise<AxiosResponse<EventsResponse>> => {
+    const url = '/api/banner'
     return axiosClient.get(url)
   },
 
-  get: (eventId: string): Promise<AxiosResponse<Event>> => {
-    const url = `/api/admin/event/${eventId}`
+  get: (eventId: string): Promise<AxiosResponse<EventResponse>> => {
+    const url = `/api/banner/${eventId}`
     return axiosClient.get(url)
   },
 
-  update: (eventId: string, data: Event): Promise<AxiosResponse<Event>> => {
-    const url = `/api/admin/event/${eventId}/update`
+  update: (eventId: string, data: FormData): Promise<AxiosResponse<Event>> => {
+    const url = `/api/admin/banner/${eventId}`
     return axiosClient.put(url, data)
   },
 
-  add: (data: CreatingEvent): Promise<AxiosResponse<Event>> => {
-    const url = `/api/admin/event/`
+  add: (data: FormData): Promise<AxiosResponse<Event>> => {
+    const url = `/api/admin/banner`
     return axiosClient.post(url, data)
   },
 
-  delete: (eventId: string): Promise<AxiosResponse> => {
-    const url = `/api/admin/event/${eventId}/delete`
+  delete: (bannerId: string): Promise<AxiosResponse> => {
+    const url = `/api/admin/banner/${bannerId}`
     return axiosClient.delete(url)
   },
 }

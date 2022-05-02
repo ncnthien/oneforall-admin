@@ -11,7 +11,7 @@ const Main: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const {
-          data: { orderList: orders },
+          data: { data: orders },
         } = await orderApi.getAll()
 
         setOrders(orders)
@@ -25,27 +25,26 @@ const Main: React.FC = () => {
 
   const handleUpdateOrderStatus = async (
     orderId: string,
-    orderCode: string,
-    updateState: string
+    userId: string,
+    orderStatus: 'paid' | 'UNPAID'
   ) => {
     try {
       const okStatus = 200
-      const {
-        data: { updatedOrder },
-        status,
-      } = await orderApi.update(orderId, updateState)
+      const { status } = await orderApi.update(orderId, userId, orderStatus)
       if (status === okStatus) {
         const clonedOrders = getClone(orders)
         const orderIndex = clonedOrders.findIndex(
-          order => order._id === updatedOrder._id
+          order => order._id === orderId
         )
-        clonedOrders[orderIndex] = updatedOrder
+        clonedOrders[orderIndex].status = orderStatus
 
         setOrders(clonedOrders)
 
         swal.fire(
-          'Done!',
-          `Order ${orderCode} status is ${updateState} now!`,
+          'Xong!',
+          `Đơn ${orderId} đã chuyển trạng thái thành ${
+            orderStatus === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'
+          }!`,
           'success'
         )
       }
@@ -63,7 +62,7 @@ const Main: React.FC = () => {
         const newOrders = clonedOrders.filter(order => order._id !== orderId)
         setOrders(newOrders)
 
-        swal.fire('Done!', 'Order is deleted successfully!', 'success')
+        swal.fire('Xong!', 'Đơn đã được xóa thành công!', 'success')
       }
     } catch (error) {
       console.log(error)

@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios'
 import { User } from 'features/User/interface'
 
 const userApi = {
-  getAll: (): Promise<AxiosResponse<User[]>> => {
+  getAll: (): Promise<AxiosResponse<{ data: User[] }>> => {
     const url = '/api/admin/user'
     return axiosClient.get(url)
   },
@@ -13,9 +13,9 @@ const userApi = {
     return axiosClient.post(url)
   },
 
-  block: (userId: string): Promise<AxiosResponse> => {
-    const url = `/api/admin/user/${userId}/block`
-    return axiosClient.patch(url)
+  block: (user: User): Promise<AxiosResponse> => {
+    const url = `/api/admin/user/${user._id}`
+    return axiosClient.put(url, user)
   },
 }
 

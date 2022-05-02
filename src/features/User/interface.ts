@@ -1,6 +1,5 @@
 export interface ToggleBlockUserParam {
-  userId: string
-  userEmail: string
+  user: User
   userDisable: boolean
 }
 
@@ -10,16 +9,14 @@ export interface UserTableProps {
 }
 
 export interface User {
-  _id: string
-  email: string
-  username: string
+  address: string
   avatar: string
-  phone?: string
-  deliveryAddress?: {
-    address: string
-    ward: string
-    district: string
-    city: string
-  }
-  disable: boolean
+  email: string
+  isAdmin: boolean
+  isBlocked: boolean
+  password: string
+  phone: string
+  username: string
+  __v: number
+  _id: string
 }

@@ -7,6 +7,8 @@ import ReactPaginate from 'react-paginate'
 import { Link } from 'react-router-dom'
 import { swal, getClone } from 'helper'
 
+const LIMIT = 10
+
 const Main: React.FC = () => {
   const [totalItem, setTotalItem] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState<number>(1)
@@ -15,8 +17,11 @@ const Main: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const {
-        data: { productList: products, total: totalItem },
-      } = await productApi.getAll(pageNumber)
+        data: {
+          data: products,
+          pagination: { total: totalItem },
+        },
+      } = await productApi.getAll({ page: pageNumber, limit: LIMIT })
       setProducts(products)
       setTotalItem(totalItem)
       window.scrollTo(0, 0)
@@ -36,7 +41,6 @@ const Main: React.FC = () => {
       const { status } = await productApi.delete(productId)
       if (status === okStatus) {
         swal.fire('Deleted!', `Delete product successfully`, 'success')
-
         const clonedProducts = getClone(products)
         const newProducts = clonedProducts.filter(
           product => product._id !== productId
@@ -52,10 +56,10 @@ const Main: React.FC = () => {
     <div>
       <div className='flex justify-end mb-8'>
         <Link
-          to='/product/add'
+          to='/tour/add'
           className='bg-green-400 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-500 transition-all'
         >
-          New product
+          Thêm tour mới
         </Link>
       </div>
       <ProductTable products={products} deleteProduct={handleDeleteProduct} />
@@ -66,8 +70,8 @@ const Main: React.FC = () => {
           marginPagesDisplayed={2}
           onPageChange={handlePageChange}
           containerClassName='pagination'
-          previousLabel='prev'
-          nextLabel='next'
+          previousLabel='Trước'
+          nextLabel='Sau'
         />
       </div>
     </div>

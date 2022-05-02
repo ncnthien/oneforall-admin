@@ -4,20 +4,21 @@ import { GetOrdersData, UpdateOrderData } from 'features/Order/interface'
 
 const orderApi = {
   getAll: (): Promise<AxiosResponse<GetOrdersData>> => {
-    const url = '/api/admin/order'
+    const url = '/api/bill'
     return axiosClient.get(url)
   },
 
   update: (
     orderId: string,
+    userId: string,
     orderStatus: string
   ): Promise<AxiosResponse<UpdateOrderData>> => {
-    const url = `/api/admin/order/${orderId}/update`
-    return axiosClient.patch(url, { status: orderStatus })
+    const url = `/api/bill/${orderId}`
+    return axiosClient.put(url, { userId, status: orderStatus })
   },
 
   delete: (orderId: string): Promise<AxiosResponse> => {
-    const url = `/api/admin/order/${orderId}/delete`
+    const url = `/api/bill/${orderId}`
     return axiosClient.delete(url)
   },
 }

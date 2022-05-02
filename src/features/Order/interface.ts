@@ -9,18 +9,31 @@ export interface Product {
 }
 
 export interface Order {
-  _id: string
-  code: string
-  date: string
-  products: Product[]
-  status: 'pending' | 'claimed' | 'delivering' | 'delivered'
+  cost: number
+  createdAt: string
+  slot: number
+  status: 'paid' | 'UNPAID'
+  tourId: string
+  updatedAt: string
+  userId: string
   user: {
-    email: string
+    phone: string
+    username: string
+  }
+  __v: number
+  _id: string
+  tour: {
+    title: string
   }
 }
 
 export interface GetOrdersData {
-  orderList: Order[]
+  data: Order[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+  }
 }
 
 export interface UpdateOrderData {
@@ -31,8 +44,8 @@ export interface OrderTableProps {
   orders: Order[]
   updateOrderStatus: (
     orderId: string,
-    orderCode: string,
-    updateStatus: string
+    userId: string,
+    orderStatus: 'paid' | 'UNPAID'
   ) => void
   deleteOrder: (orderId: string) => void
 }

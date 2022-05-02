@@ -14,10 +14,13 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-paginate": "^7.1.1",
     "axios": "^0.23.0",
+    "draft-js": "^0.11.7",
     "formik": "^2.2.9",
+    "object-to-formdata": "^4.4.2",
     "qs": "^6.10.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-draft-wysiwyg": "^1.14.7",
     "react-paginate": "^7.1.5",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
@@ -52,6 +55,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-draft-wysiwyg": "^1.13.4",
     "@types/react-router-dom": "^5.3.1",
     "@types/react-truncate": "^2.3.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",

@@ -1,6 +1,5 @@
 import { AxiosSetupInterceptors } from 'apis/axiosClient'
 import {
-  Brand,
   Event,
   Login,
   Order,
@@ -16,10 +15,9 @@ const Routes: React.FC = () => {
     <BrowserRouter>
       <Switch>
         <Redirect exact from='/' to='/login' />
-        <Route path='/brand' component={() => <Brand />} />
         <Route path='/event' component={() => <Event />} />
-        <Route path='/order' component={() => <Order />} />
-        <Route path='/product' component={() => <Product />} />
+        <Route path='/bill' component={() => <Order />} />
+        <Route path='/tour' component={() => <Product />} />
         <Route path='/profile' component={() => <Profile />} />
         <Route path='/statistic' component={() => <Statistic />} />
         <Route path='/user' component={() => <User />} />

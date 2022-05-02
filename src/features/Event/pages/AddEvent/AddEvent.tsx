@@ -1,25 +1,21 @@
 import eventApi from 'apis/eventApi'
 import { CreatingEvent } from 'features/Event/interface'
-import {
-  checkFalsyKey,
-  convertToBase64,
-  getClone,
-  removeTag,
-  swal,
-} from 'helper'
+import { checkFalsyKey, getClone, swal } from 'helper'
+import { serialize } from 'object-to-formdata'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const AddEvent: React.FC = () => {
+  const history = useHistory()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const defaultCreatingEvent: CreatingEvent = {
     title: '',
-    url: '',
-    banner: '',
+    description: '',
+    images: null,
   }
   const [event, setEvent] = useState<CreatingEvent>(defaultCreatingEvent)
   const titleMaxLength = 40
-  const urlMaxLength = 100
 
   const handleTextFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEvent({ ...event, [e.target.name]: e.target.value })
@@ -29,11 +25,13 @@ const AddEvent: React.FC = () => {
     if (!e.target.files) {
       return
     }
+    const newEvent = { ...event, photos: e.target.files[0] }
 
-    const targetFile = e.target.files[0]
-    const base64Image = await convertToBase64(targetFile)
-    const newEvent = { ...event, [e.target.name]: base64Image }
+    setEvent(newEvent)
+  }
 
+  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newEvent = { ...event, description: e.target.value }
     setEvent(newEvent)
   }
 
@@ -58,39 +56,32 @@ const AddEvent: React.FC = () => {
       )
     }
 
-    if (event.url.length > urlMaxLength) {
-      return swal.fire(
-        'Opps!',
-        `Maximum length of url is ${urlMaxLength}`,
-        'error'
-      )
-    }
-
     try {
       setIsLoading(true)
-      const createdStatus = 201
-      const clonedEvent = getClone(event)
 
-      // Remove tag to get only base64 string
-      clonedEvent.banner = removeTag(event.banner)
-      const { data: newEvent, status } = await eventApi.add(clonedEvent)
+      const addingEvent: any = { ...event }
+      delete addingEvent?.images
+
+      const formData = serialize(addingEvent)
+
+      const { data: newEvent, status } = await eventApi.add(formData)
       setIsLoading(false)
-      if (status === createdStatus) {
-        setEvent(newEvent)
+      if (status) {
+        // setEvent(newEvent)
         const result = await swal.fire(
-          'Done!',
-          `Adding new event successfully`,
+          'Xong!',
+          `Thêm sự kiện mới thành công`,
           'success'
         )
 
         if (result.isDismissed || result.isConfirmed) {
-          setEvent(defaultCreatingEvent)
+          history.push('/event')
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setIsLoading(false)
-      let message = 'Adding new event failed, please try again'
+      let message = 'Thêm sự kiện mới thất bại, vui lòng thử lại'
       if (error.response) {
         message = error.response.data
       }
@@ -106,14 +97,15 @@ const AddEvent: React.FC = () => {
           to='/event'
           className='text-white bg-cyan-400 py-2 px-4 rounded-md shadow-md hover:bg-cyan-500 transition-all'
         >
-          Back
+          Trở về
         </Link>
       </div>
+
       <div className='bg-white rounded-md shadow-md py-16 px-20 flex flex-wrap'>
         <div className='w-4/12 pr-12'>
           <div className='mb-8'>
             <label htmlFor='title' className='inline-block mb-2'>
-              Title:
+              Tiêu đề:
             </label>
             <br />
             <input
@@ -125,40 +117,28 @@ const AddEvent: React.FC = () => {
               onChange={handleTextFieldChange}
             />
           </div>
-          <div>
-            <label htmlFor='url' className='inline-block mb-2'>
-              URL:
-            </label>
-            <br />
-            <input
-              type='text'
-              id='url'
-              className='border-2 border-gray-300 rounded-sm w-full px-2 focus:outline-none'
-              name='url'
-              value={event.url}
-              onChange={handleTextFieldChange}
-            />
-          </div>
         </div>
         <div className='w-8/12 flex items-center justify-center'>
-          <label htmlFor='banner' className='cursor-pointer'>
-            {event.banner ? (
-              <img src={event.banner} alt='' className='w-full' />
-            ) : (
-              <label
-                htmlFor='banner'
-                className='bg-green-400 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-500 transition-all text-sm w-60 cursor-pointer'
-              >
-                Add banner
-              </label>
-            )}
-          </label>
           <input
             type='file'
             name='banner'
             id='banner'
-            className='hidden'
             onChange={handleFileChange}
+            accept='image/*'
+          />
+        </div>
+        <div className='w-full mb-8'>
+          <label htmlFor='title' className='inline-block mb-2'>
+            Mô tả:
+          </label>
+          <br />
+          <textarea
+            value={event.description}
+            name='description'
+            className='border-2 border-gray-300 rounded-sm px-2 resize-none focus:outline-none w-full'
+            rows={10}
+            onChange={handleTextAreaChange}
+            placeholder='Mô tả sự kiện'
           />
         </div>
         <div className='w-full text-center mt-12'>
@@ -191,7 +171,7 @@ const AddEvent: React.FC = () => {
                 ></path>
               </svg>
             )}
-            <span>Add new event</span>
+            <span>Thêm sự kiện</span>
           </button>
         </div>
       </div>

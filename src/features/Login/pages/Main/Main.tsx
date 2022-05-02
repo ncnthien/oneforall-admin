@@ -21,12 +21,13 @@ const Main: React.FC = () => {
     const token = localStorage.getItem(jwtTokenKey)
 
     if (token) {
-      history.push('/brand')
+      history.push('/event')
     }
   }, [])
 
   const LoginSchema = Yup.object().shape({
-    username: Yup.string()
+    email: Yup.string()
+      .email('Email is not valid')
       .min(4, 'At least 4 character')
       .max(40, 'Maximum is 40 character')
       .required('Username is required'),
@@ -37,8 +38,8 @@ const Main: React.FC = () => {
   })
 
   const LoginFormData: LoginFormData = {
-    username: 'admin',
-    password: 'oneforall123',
+    email: 'admin@gmail.com',
+    password: '123123',
   }
 
   const handleFormSubmit = async (
@@ -51,14 +52,16 @@ const Main: React.FC = () => {
       const data = { ...values } as LoginFormData
 
       const {
-        data: { token },
+        data: {
+          auth: { token },
+        },
       } = await authApi.login(data)
 
       const jwtTokenKey = 'jwtToken'
       localStorage.setItem(jwtTokenKey, token)
 
       actions.setSubmitting(false)
-      history.push('/brand')
+      history.push('/event')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setError(error.response.data)
@@ -70,7 +73,7 @@ const Main: React.FC = () => {
       <div className=' w-96  p-6 mx-auto  border-gray-300 bg-white rounded-xl shadow flex items-center space-x-4'>
         <div className='w-full'>
           <div className='text-3xl font-medium text-center text-cyan-400 mb-6'>
-            One For All
+            Dulichdi
           </div>
           <Formik
             initialValues={LoginFormData}
@@ -80,17 +83,17 @@ const Main: React.FC = () => {
             {({ isSubmitting }) => (
               <Form>
                 <div className='flex flex-col mb-2'>
-                  <label htmlFor='username' className='font-medium mb-2'>
-                    Username
+                  <label htmlFor='email' className='font-medium mb-2'>
+                    Email
                   </label>
                   <Field
-                    id='username'
-                    name='username'
-                    placeholder='Nhập username'
+                    id='email'
+                    name='email'
+                    placeholder='Nhập email'
                     className='outline-none	h-12 bg-gray-100 px-4 mb-2 rounded'
                   />
                   <ErrorMessage
-                    name='username'
+                    name='email'
                     component='error'
                     className='text-red-400'
                   />

@@ -3,12 +3,14 @@ import { LoginFormData } from 'features/Login/pages/Main/interface'
 import axiosClient from './axiosClient'
 
 export interface TokenData {
-  token: string
+  auth: {
+    token: string
+  }
 }
 
 export const authApi = {
   login: (data: LoginFormData): Promise<AxiosResponse<TokenData>> => {
-    const url = 'api/admin/auth/login'
+    const url = '/auth/login'
     return axiosClient.post(url, data)
   },
 }

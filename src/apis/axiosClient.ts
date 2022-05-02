@@ -2,7 +2,6 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import queryString from 'qs'
 import { useHistory } from 'react-router-dom'
 
-console.log(process.env.REACT_APP_API_URL)
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
@@ -20,7 +19,7 @@ export const AxiosSetupInterceptors: React.FC = () => {
     const token = localStorage.getItem(jwtTokenKey) || ''
 
     if (config.headers) {
-      config.headers['authorization'] = token
+      config.headers['x-access-token'] = token
     }
 
     return config

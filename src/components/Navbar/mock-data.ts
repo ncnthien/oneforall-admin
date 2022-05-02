@@ -8,38 +8,33 @@ import usersImg from 'assets/images/users.png'
 
 export const navbarList = [
   {
-    icon: brandImg,
-    to: '/brand',
-    display: 'Brand',
-  },
-  {
     icon: eventImg,
     to: '/event',
-    display: 'Event',
+    display: 'Sự kiện',
   },
   {
     icon: orderImg,
-    to: '/order',
-    display: 'Order',
+    to: '/bill',
+    display: 'Hóa đơn',
   },
   {
     icon: productImg,
-    to: '/product',
-    display: 'Product',
+    to: '/tour',
+    display: 'Tour',
   },
   {
     icon: usersImg,
     to: '/user',
-    display: 'User',
+    display: 'Người dùng',
   },
   {
     icon: statisticImg,
     to: '/statistic',
-    display: 'Statistic',
+    display: 'Thống kê',
   },
   {
     icon: profileImg,
     to: '/profile',
-    display: 'Profile',
+    display: 'Thông tin',
   },
 ]

@@ -8,36 +8,59 @@ interface ExtraDetail {
   value: string
 }
 
+export interface AddingProduct {
+  photos: File[] | FormData
+  title: string
+  description: string
+  location: string
+  price: number
+  schedule: string
+  departureTime: string
+  transport: string
+  availableSlot: number
+}
+
+export interface DefaultAddingProduct {
+  title: string
+  description: string
+  location: string
+  price: number
+  schedule: string
+  departureTime: string
+  transport: string
+  availableSlot: number
+  image?: null | File
+}
+
 export interface Product {
-  _id: string
-  name: string
-  type: 'laptop' | 'pc' | 'accessory'
-  brand: string
-  subBrand: string
-  price: number | string
-  isSale: boolean
-  reducedPrice?: number
   images: string[]
-  quantity: number | string
-  cpu?: Detail
-  ram?: Detail
-  hardDrive?: Detail
-  hardDriveNumber?: Detail
-  monitorDimension?: Detail
-  monitorRatio?: Detail
-  monitorBackground?: Detail
-  frequency?: Detail
-  graphicsCard?: Detail
-  graphicsMemory?: Detail
-  weight?: Detail
-  resolution?: Detail
-  accessoryType?: Detail
-  extraDetail?: ExtraDetail[]
+  _id: string
+  image?: File | null
+  title: string
+  description: string
+  location: string
+  price: number
+  schedule: string
+  departureTime: string
+  transport: string
+  availableSlot: number
+  __v: number
+  updatedAt: string
+  createdAt: string
+  photos?: File
+}
+
+export interface GetDetailProductData {
+  data: Product
 }
 
 export interface GetProductsData {
-  productList: Product[]
-  total: number
+  data: Product[]
+  pagination: {
+    limit: number
+    page: number
+    total: number
+  }
 }
 
 export interface ProductTableProps {

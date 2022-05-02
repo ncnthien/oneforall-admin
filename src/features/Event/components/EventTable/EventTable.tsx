@@ -1,21 +1,17 @@
-import { Event, EventTableProps } from 'features/Event/interface'
+import { EventTableProps } from 'features/Event/interface'
 import { Link } from 'react-router-dom'
 import { swal } from 'helper'
 
-const EventTable: React.FC<EventTableProps> = ({
-  events,
-  deleteEvent,
-  toggleActiveEvent,
-}) => {
+const EventTable: React.FC<EventTableProps> = ({ events, deleteEvent }) => {
   const handleRemoveButtonClick =
     (eventId: string, eventTitle: string) => () => {
       swal
         .fire({
-          title: `Are you sure to delete event ${eventTitle}`,
-          text: "You won't be able to revert this!",
+          title: `Bạn có chắc muốn xóa sự kiện ${eventTitle}`,
+          text: 'Bạn sẽ không thể hoàn tác!',
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonText: 'Yes, delete it!',
+          confirmButtonText: 'Vâng, xóa nó!',
         })
         .then(async result => {
           if (result.isConfirmed) {
@@ -24,25 +20,18 @@ const EventTable: React.FC<EventTableProps> = ({
         })
     }
 
-  const handleToggleButtonClick = (event: Event) => () => {
-    toggleActiveEvent(event)
-  }
-
-  const renderTableData = (): JSX.Element[] =>
-    events.map(event => (
+  const renderTableData = (): JSX.Element[] => {
+    return events.map(event => (
       <tr key={event._id} className='text-center border-b-2 min-w-max'>
         <td className='w-4/12 py-2 px-4'>
-          <img src={event.banner} alt={event.title} className='w-full inline' />
+          <img
+            src={(event.images as string[])[0]}
+            alt={event.title}
+            className='w-full inline'
+          />
         </td>
-        <td className='w-2/12 py-2 px-4'>{event.title}</td>
-        <td className='w-2/12 py-2 px-4'>{event.url}</td>
+        <td className='w-4/12 py-2 px-4'>{event.title}</td>
         <td className='w-4/12 py-2 px-4'>
-          <button
-            onClick={handleToggleButtonClick(event)}
-            className='bg-yellow-400 text-white rounded py-2 px-3 inline-block mr-1 text-sm hover:bg-yellow-500 transition-all'
-          >
-            {event.isActive ? 'Active' : 'Disable'}
-          </button>
           <Link
             to={{
               pathname: `/event/${event._id}`,
@@ -50,26 +39,26 @@ const EventTable: React.FC<EventTableProps> = ({
             }}
             className='bg-cyan-400 text-white rounded py-2 px-3 inline-block mr-1 text-sm hover:bg-cyan-500 transition-all'
           >
-            Detail
+            Chi tiết
           </Link>
           <button
             onClick={handleRemoveButtonClick(event._id, event.title)}
             className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'
           >
-            Remove
+            Xóa
           </button>
         </td>
       </tr>
     ))
+  }
 
   return (
     <table className='bg-white rounded-lg shadow-lg px-3 w-full'>
       <thead className='border-b-2 min-w-max'>
         <tr>
-          <th className='py-4'>Banner</th>
-          <th className='py-4'>Title</th>
-          <th className='py-4'>URL</th>
-          <th className='py-4'>Actions</th>
+          <th className='py-4'>Ảnh</th>
+          <th className='py-4'>Tiêu đề</th>
+          <th className='py-4'>Action</th>
         </tr>
       </thead>
       <tbody>{renderTableData()}</tbody>

@@ -12,26 +12,23 @@ const Navbar: React.FC = () => {
     const featureRoute = match.url.split('/')[1]
 
     switch (featureRoute) {
-      case 'brand':
+      case 'event':
         setActiveIndex(0)
         break
-      case 'event':
+      case 'bill':
         setActiveIndex(1)
         break
-      case 'order':
+      case 'tour':
         setActiveIndex(2)
         break
-      case 'product':
+      case 'user':
         setActiveIndex(3)
         break
-      case 'user':
+      case 'statistic':
         setActiveIndex(4)
         break
-      case 'statistic':
-        setActiveIndex(5)
-        break
       case 'profile':
-        setActiveIndex(6)
+        setActiveIndex(5)
         break
       default:
         break

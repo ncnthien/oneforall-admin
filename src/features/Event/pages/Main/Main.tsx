@@ -11,7 +11,10 @@ const Main: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const { data: events } = await eventApi.getAll()
+        const {
+          data: { data: events },
+        } = await eventApi.getAll()
+
         setEvents(events)
       } catch (error) {
         // Handle errors occuring here
@@ -27,7 +30,7 @@ const Main: React.FC = () => {
       const okStatus = 200
       const { status } = await eventApi.delete(eventId)
       if (status === okStatus) {
-        swal.fire('Deleted!', `Delete ${eventTitle} successfully`, 'success')
+        swal.fire('Đã xóa!', `Xóa sự kiện ${eventTitle} thành công`, 'success')
 
         const clonedEvents = getClone(events)
         const newEvents = clonedEvents.filter(event => event._id !== eventId)
@@ -36,29 +39,9 @@ const Main: React.FC = () => {
     } catch (error) {
       swal.fire(
         'Opps!',
-        `Delete ${eventTitle} failed, please try again!`,
+        `Xóa sự kiện ${eventTitle} thất bại, vui lòng thử lại!`,
         'error'
       )
-    }
-  }
-
-  const handleToggleActiveEvent = async (event: Event) => {
-    try {
-      const updatingEvent = { ...event, isActive: !event.isActive } as Event
-      const { data: newEvent } = await eventApi.update(event._id, updatingEvent)
-      const clonedEvents = getClone(events)
-      const newEvents = clonedEvents.map(clonedEvent =>
-        clonedEvent._id === event._id ? newEvent : clonedEvent
-      )
-      setEvents(newEvents)
-      swal.fire(
-        'Done!',
-        `${event.title} is ${event.isActive ? 'disable' : 'active'}!`,
-        'success'
-      )
-    } catch (error) {
-      // Handle UI if error occurs here!
-      console.log(error)
     }
   }
 
@@ -69,15 +52,11 @@ const Main: React.FC = () => {
           to='/event/add'
           className='bg-green-400 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-500 transition-all'
         >
-          New event
+          Thêm sự kiện
         </Link>
       </div>
       <div className='max-w-full'>
-        <EventTable
-          events={events}
-          deleteEvent={handleDeleteEvent}
-          toggleActiveEvent={handleToggleActiveEvent}
-        />
+        <EventTable events={events} deleteEvent={handleDeleteEvent} />
       </div>
     </div>
   )

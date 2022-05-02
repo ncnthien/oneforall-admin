@@ -8,20 +8,18 @@ const OrderTable: React.FC<OrderTableProps> = ({
   deleteOrder,
 }) => {
   const handleOrderStatusChange =
-    (orderId: string, orderCode: string) =>
-    (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const updateState = event.target.value
-      updateOrderStatus(orderId, orderCode, updateState)
+    (orderId: string, userId: string, orderStatus: 'paid' | 'UNPAID') => () => {
+      updateOrderStatus(orderId, userId, orderStatus)
     }
 
-  const handleRemoveOrderClick = (orderId: string, orderCode: string) => () => {
+  const handleRemoveOrderClick = (orderId: string) => () => {
     swal
       .fire({
-        title: `Are you sure to delete order ${orderCode}`,
-        text: "You won't be able to revert this!",
+        title: `Bạn có chắc muốn xóa hóa đơn ${orderId}`,
+        text: 'Bạn sẽ không thể hoàn tác!',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Xóa!',
       })
       .then(async result => {
         if (result.isConfirmed) {
@@ -30,54 +28,41 @@ const OrderTable: React.FC<OrderTableProps> = ({
       })
   }
 
-  const calculateTotalCost = (products: Product[]): number =>
-    products.reduce(
-      (total, product, quantity) => total + product.cost * quantity,
-      0
-    )
-
-  const renderProductItems = (products: Product[]): JSX.Element[] =>
-    products.map(product => <ProductItem key={product._id} product={product} />)
-
   const renderTableData = (): JSX.Element[] =>
-    orders.map(({ _id, code, date, products, user, status }) => {
-      const dateTime = new Date(date)
+    orders.map(order => {
+      const dateTime = new Date(order.createdAt)
 
       return (
-        <tr key={_id} className='text-center border-b-2 min-w-max'>
-          <td className='py-2 px-4'>{code}</td>
+        <tr key={order._id} className='text-center border-b-2 min-w-max'>
+          <td className='py-2 px-4'>{order._id}</td>
           <td className='py-2 px-4'>{dateTime.toLocaleDateString()}</td>
+          <td className='py-2 px-4'>{order.user.username}</td>
+          <td className='py-2 px-4'>{order.user.phone}</td>
+          <td className='py-2 px-4'>{order.slot}</td>
+          <td className='py-2 px-4'>{order.cost.toLocaleString()} VND</td>
+          <td className='py-2 px-4'>{order.tour.title}</td>
           <td className='py-2 px-4'>
-            <div>{renderProductItems(products)}</div>
-            <div className='text-left mt-1'>
-              Total cost: {calculateTotalCost(products).toLocaleString()}₫
-            </div>
-          </td>
-          <td className='py-2 px-4'>{user.email}</td>
-          <td className='py-2 px-4'>
-            <select
-              onChange={handleOrderStatusChange(_id, code)}
-              defaultValue={status}
-              className='appearance-none text-center text-sm py-2 px-3 focus:outline-none cursor-pointer bg-cyan-400 rounded-md text-white mr-1 hover:bg-cyan-500 transition-all'
-            >
-              <option value='pending' className='bg-white text-gray-900'>
-                Pending
-              </option>
-              <option value='claimed' className='bg-white text-gray-900'>
-                Claimed
-              </option>
-              <option value='delivering' className='bg-white text-gray-900'>
-                Delivering
-              </option>
-              <option value='delivered' className='bg-white text-gray-900'>
-                Delivered
-              </option>
-            </select>
             <button
-              onClick={handleRemoveOrderClick(_id, code)}
+              className={`${
+                order.status === 'paid' ? 'bg-green-400' : 'bg-yellow-400'
+              } text-white rounded py-2 px-3 mr-2 ionline-block text-sm ${
+                order.status === 'paid'
+                  ? 'hover:bg-green-500'
+                  : 'hover:bg-yellow-500'
+              } transition-all`}
+              onClick={handleOrderStatusChange(
+                order._id,
+                order.userId,
+                order.status === 'UNPAID' ? 'paid' : 'UNPAID'
+              )}
+            >
+              {order.status === 'paid' ? 'đã thanh toán' : 'chưa thanh toán'}
+            </button>
+            <button
+              onClick={handleRemoveOrderClick(order._id)}
               className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'
             >
-              Remove
+              Xóa
             </button>
           </td>
         </tr>
@@ -88,10 +73,13 @@ const OrderTable: React.FC<OrderTableProps> = ({
     <table className='bg-white rounded-lg shadow-lg px-3 w-full'>
       <thead className='border-b-2 min-w-max'>
         <tr>
-          <th className='py-4'>Code</th>
-          <th className='py-4'>Date</th>
-          <th className='py-4'>Products</th>
-          <th className='py-4'>Buyer</th>
+          <th className='py-4'>Mã</th>
+          <th className='py-4'>Ngày</th>
+          <th className='py-4'>Người đặt</th>
+          <th className='py-4'>Số điện thoại</th>
+          <th className='py-4'>Số chỗ</th>
+          <th className='py-4'>Giá</th>
+          <th className='py-4'>Tour</th>
           <th className='py-4'>Action</th>
         </tr>
       </thead>

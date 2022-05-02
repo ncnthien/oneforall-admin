@@ -10,11 +10,11 @@ const ProductTable: React.FC<ProductTableProps> = ({
     (productId: string, productName: string) => () => {
       swal
         .fire({
-          title: `Are you sure to delete product ${productName}`,
-          text: "You won't be able to revert this!",
+          title: `Bạn có chắc muốn xóa tour ${productName}`,
+          text: 'Bạn sẽ không thể hoàn tác!',
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonText: 'Yes, delete it!',
+          confirmButtonText: 'Xóa!',
         })
         .then(async result => {
           if (result.isConfirmed) {
@@ -24,28 +24,26 @@ const ProductTable: React.FC<ProductTableProps> = ({
     }
 
   const renderTableData = (): JSX.Element[] =>
-    products.map(({ images, name, quantity, _id }) => (
-      <tr key={_id} className='text-center border-b-2 min-w-max'>
+    products.map(tour => (
+      <tr key={tour._id} className='text-center border-b-2 min-w-max'>
         <td className='py-2 px-4'>
-          <img src={images[0]} alt={name} className='w-44 inline' />
+          <img src={tour.images[0]} alt={tour.title} className='w-44 inline' />
         </td>
-        <td className='py-2 px-4'>{name}</td>
-        <td className='py-2 px-4'>{quantity}</td>
+        <td className='py-2 px-4'>{tour.title}</td>
+        <td className='py-2 px-4'>{tour.availableSlot}</td>
+        <td className='py-2 px-4'>{tour.price.toLocaleString()} VND</td>
         <td className='py-2 px-4'>
           <Link
-            to={{
-              pathname: `/product/${_id}`,
-              state: { _id },
-            }}
+            to={`/tour/${tour._id}`}
             className='bg-cyan-400 text-white rounded py-2 px-3 inline-block mr-1 text-sm hover:bg-cyan-500 transition-all'
           >
-            Detail
+            Chi tiết
           </Link>
           <button
-            onClick={handleDeleteProductButton(_id, name)}
+            onClick={handleDeleteProductButton(tour._id, tour.title)}
             className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'
           >
-            Remove
+            Xóa
           </button>
         </td>
       </tr>
@@ -55,9 +53,10 @@ const ProductTable: React.FC<ProductTableProps> = ({
     <table className='bg-white rounded-lg shadow-lg px-3 w-full'>
       <thead className='border-b-2 min-w-max'>
         <tr>
-          <th className='py-4'>Image</th>
-          <th className='py-4'>Name</th>
-          <th className='py-4'>Quantity</th>
+          <th className='py-4'>Ảnh</th>
+          <th className='py-4'>Tên</th>
+          <th className='py-4'>Số chỗ</th>
+          <th className='py-4'>Giá</th>
           <th className='py-4'>Action</th>
         </tr>
       </thead>

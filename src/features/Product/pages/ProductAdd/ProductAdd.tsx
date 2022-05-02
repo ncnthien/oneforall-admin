@@ -1,266 +1,260 @@
-import { useEffect, useCallback, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { useFormik } from 'formik';
-import { removeTag, swal } from 'helper'
- 
-import {
-  Brand, SubBrand
-} from 'features/Brand/interface'
-import brandApi from 'apis/brandApi';
-import productApi from 'apis/productApi';
-import { convertToBase64 } from 'helper'
-import { initValue, listDetail } from './initValue';
-import { productSchema } from './validationSchema';
+
+import productApi from 'apis/productApi'
+import { useFormik } from 'formik'
+import { swal } from 'helper'
+import { useCallback, useState } from 'react'
+import { productSchema } from './validationSchema'
+import { AddingProduct, DefaultAddingProduct } from 'features/Product/interface'
+import { serialize } from 'object-to-formdata'
+
+const defaultProduct: DefaultAddingProduct = {
+  title: '',
+  description: '',
+  location: '',
+  price: 1,
+  schedule: '',
+  departureTime: '',
+  transport: '',
+  availableSlot: 1,
+  image: null,
+}
 
 const ProductAdd: React.FC = () => {
-  const [brands, setBrands] = useState<Brand[]>([])
-  const [subBrands, setSubBrands] = useState<SubBrand[]>([])
+  const history = useHistory()
 
-  const history = useHistory();
-
-  const formik = useFormik({
-    initialValues: initValue,
+  const {
+    errors,
+    handleChange,
+    touched,
+    handleSubmit,
+    handleBlur,
+    values,
+    setFieldValue,
+  } = useFormik({
+    initialValues: defaultProduct,
+    enableReinitialize: true,
     validationSchema: productSchema,
-    onSubmit: (values) => {
-      const imagesRemovedTag = values.images.map(img => removeTag(img))
-      addProduct({...values, images: imagesRemovedTag})
-    }
+    onSubmit: submittedValues => {
+      const addingProduct = {
+        ...submittedValues,
+        photos: submittedValues.image as File,
+      }
+
+      delete addingProduct.image
+
+      const formData = serialize(addingProduct)
+
+      addProduct(formData)
+    },
   })
 
-  const { values, errors, handleChange, touched, handleSubmit, handleBlur, setFieldValue } = formik
-
-  const fetchBrand = useCallback(async() => {
-    try {
-      const { data }  = await brandApi.getAll();
-      setBrands(data);
-      setFieldValue('brand', data[0]?._id)
-    } catch (error) {
-      console.log(error);
-    }
-  }, [])
-
-  const fetchSubBrand = useCallback(async(brandId) => {
-    try {
-      const { data }  = await brandApi.getAllSubBrand(brandId);
-      setSubBrands(data);
-      setFieldValue('subBrand', data[0]?._id)
-    } catch (error) {
-      console.log(error);
-    }
-  }, [])
-
-  const addProduct = useCallback(async(values) => {
-    try {
-      await productApi.addProduct(values);
-      swal.fire('Done!', `Add new product successfully`, 'success').then(() => {
-        history.push('/product');
-      });
-    } catch (error) {
-      swal.fire('Opps!', 'Something went wrong :(', 'error')
-    }
-  }, [])
-  
-  const renderImages = (): JSX.Element[] =>
-    values.images.map((image, index) => (
-      <div key={index} className='w-36 h-36 relative mr-4 mb-4'>
-        <img
-          src={image}
-          alt=''
-          className='h-full w-full object-contain border-2'
-        />
-        <button className='absolute top-1 right-1 w-5 h-5 text-gray-200 border-2 border-gray-200 rounded-full flex items-center justify-center'>
-          <span className='text-sm leading-none'>x</span>
-        </button>
-      </div>
-    ))
-
-  const handleFormChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (!event.target.files) {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
       return
     }
 
-    const targetFile = event.target.files[0]
-    const base64Image = (await convertToBase64(targetFile)) as string
-    setFieldValue('images', [...values.images, base64Image])
+    setFieldValue('image', e.target.files[0])
   }
 
-  useEffect(() => {
-    fetchBrand()
-  }, [])
-
-  useEffect(() => {
-    if (values.brand) {
-      fetchSubBrand(values.brand)
+  const addProduct = useCallback(async (values: FormData) => {
+    try {
+      await productApi.addProduct(values)
+      swal.fire('Xong!', `Thêm tour thành công!`, 'success').then(() => {
+        history.push('/tour')
+      })
+    } catch (error) {
+      swal.fire('Opps!', 'Có lỗi gì đó, vui lòng thử lại :(', 'error')
     }
-  }, [values.brand])
+  }, [])
 
   return (
     <div>
       <div className='mb-8'>
         <Link
-          to='/product'
+          to='/tour'
           className='text-white bg-cyan-400 py-2 px-4 rounded-md shadow-md hover:bg-cyan-500 transition-all'
         >
-          Back
+          Trở về
         </Link>
       </div>
       <div className='bg-white rounded-md shadow-md py-16 px-20'>
         <form onSubmit={handleSubmit}>
           <div className='mb-5'>
-            <div className='text-lg font-medium mb-4'>Images</div>
-            <div className='border-gray-200 border-2 border-dashed p-4'>
-              <div className='flex flex-wrap'>
-                {renderImages()}
-                <label
-                  htmlFor='imageUpload'
-                  className='flex items-center justify-center border-2 border-gray-200 cursor-pointer w-36 h-36'
-                >
-                  <span className='text-6xl text-gray-20 text-gray-200 relative bottom-2'>
-                    +
-                  </span>
-                </label>
-                <input
-                  type='file'
-                  id='imageUpload'
-                  className='hidden'
-                  onChange={handleFormChange}
-                />
-              </div>
+            <div className='text-lg font-medium mb-4'>Ảnh</div>
+            <div className='flex flex-wrap'>
+              <input
+                type='file'
+                id='imageUpload'
+                name='image'
+                onChange={handleFileChange}
+              />
+              {errors.image && touched.image && (
+                <p className='text-red-400'>{errors.image}</p>
+              )}
             </div>
           </div>
           <div>
-            <div className='text-lg font-medium mb-4'>Information</div>
+            <div className='text-lg font-medium mb-4'>Thông tin tour</div>
             <div>
               <div className='flex flex-wrap'>
-                <div className='mr-8 mb-2 mt-3'>
-                  <label htmlFor='name' className='mr-2'>
-                    Name:
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='title' className='mr-2'>
+                    Tên:
                   </label>
                   <input
                     type='text'
-                    name="name"
-                    className='focus:outline-none border-gray-200 border-2'
+                    name='title'
+                    id='title'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    value={values.title}
                   />
-                  {errors.name && touched.name && <p className="text-red-400">{errors.name}</p>}
+                  {errors.title && touched.title && (
+                    <p className='text-red-400'>{errors.title}</p>
+                  )}
                 </div>
 
-                <div className='mr-8 mb-2 mt-3'>
-                  <label htmlFor='name' className='mr-2'>
-                    Price:
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='price' className='mr-2'>
+                    Giá:
+                  </label>
+                  <input
+                    type='number'
+                    name='price'
+                    id='price'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.price}
+                    min={1}
+                  />
+                  {errors.price && touched.price && (
+                    <p className='text-red-400'>{errors.price}</p>
+                  )}
+                </div>
+
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='availableSlot' className='mr-2'>
+                    Số chỗ:
+                  </label>
+                  <input
+                    type='number'
+                    name='availableSlot'
+                    id='availableSlot'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.availableSlot}
+                    min={1}
+                  />
+                  {errors.availableSlot && touched.availableSlot && (
+                    <p className='text-red-400'>{errors.availableSlot}</p>
+                  )}
+                </div>
+
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='location' className='mr-2'>
+                    Địa điểm:
                   </label>
                   <input
                     type='text'
-                    name="price"
-                    className='focus:outline-none border-gray-200 border-2'
+                    name='location'
+                    id='location'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    value={values.location}
                   />
-                  {errors.price && touched.price && <p className="text-red-400">{errors.price}</p>}
+                  {errors.location && touched.location && (
+                    <p className='text-red-400'>{errors.location}</p>
+                  )}
                 </div>
 
-                <div className='mr-8 mb-2 mt-3'>
-                  <label htmlFor='name' className='mr-2'>
-                    Quantity:
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='schedule' className='mr-2'>
+                    Lịch trình:
                   </label>
                   <input
                     type='text'
-                    name="quantity"
-                    className='focus:outline-none border-gray-200 border-2'
+                    name='schedule'
+                    id='schedule'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
+                    placeholder='2 ngày 1 đêm'
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    value={values.schedule}
                   />
-                  {errors.quantity && touched.quantity && <p className="text-red-400">{errors.quantity}</p>}
+                  {errors.schedule && touched.schedule && (
+                    <p className='text-red-400'>{errors.schedule}</p>
+                  )}
                 </div>
 
-                <div className='mr-8 mb-2 mt-3'>
-                  <label htmlFor='type' className='mr-2'>
-                    Type:
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='transport' className='mr-2'>
+                    Phương tiện:
                   </label>
-                  <select
-                    name='type'
-                    id='type'
-                    className='appearance-none focus:outline-none border-gray-200 border-2 text-center px-2 cursor-pointer'
+                  <input
+                    type='text'
+                    name='transport'
+                    id='transport'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
                     onChange={handleChange}
-                  >
-                    <option value='laptop'>Laptop</option>
-                    <option value='pc'>PC</option>
-                    <option value='accessory'>Accessory</option>
-                  </select>
+                    onBlur={handleBlur}
+                    value={values.transport}
+                    placeholder='Xe buýt'
+                  />
+                  {errors.transport && touched.transport && (
+                    <p className='text-red-400'>{errors.transport}</p>
+                  )}
                 </div>
 
-                <div className='mr-8 mb-2 mt-3'>
-                  <label htmlFor='type' className='mr-2'>
-                    Brand:
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='departureTime' className='mr-2'>
+                    Ngày khởi hành:
                   </label>
-                  <select
-                    name='brand'
-                    id='brand'
-                    className='appearance-none focus:outline-none border-gray-200 border-2 text-center px-2 cursor-pointer'
+                  <input
+                    type='date'
+                    name='departureTime'
+                    id='departureTime'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
                     onChange={handleChange}
-                  >
-                    {brands.map((brand, index) => <option key={index} value={brand._id}>{brand.name}</option>)}
-                  </select>
+                    onBlur={handleBlur}
+                    value={values.departureTime}
+                    placeholder='Xe buýt'
+                  />
+                  {errors.departureTime && touched.departureTime && (
+                    <p className='text-red-400'>{errors.departureTime}</p>
+                  )}
                 </div>
 
-                <div className='mr-8 mb-2 mt-3'>
-                  <label htmlFor='type' className='mr-2'>
-                    Sub brand:
+                <div className='mb-2 mt-2 pr-3 w-1/2'>
+                  <label htmlFor='description' className='mr-2'>
+                    Mô tả:
                   </label>
-                  <select
-                    name='subBrand'
-                    id='subBrand'
-                    className='appearance-none focus:outline-none border-gray-200 border-2 text-center px-2 cursor-pointer'
+                  <textarea
+                    name='description'
+                    id='description'
+                    className='focus:outline-none border-gray-200 border-2 w-full p-2'
                     onChange={handleChange}
-                  >
-                    {subBrands.map((s, index) => <option key={index} value={s.value}>{s.name}</option>)}
-                  </select>
-                </div>
-
-                <div className="flex flex-wrap mt-3">
-                  {listDetail.map((item) => (
-                    <div className='mb-2 w-1/2' key={item.id}>
-                      <div className="flex">
-                        <div className='mr-8 mb-2 mt-3 w-full'>
-                          <label htmlFor={item.id} className='mr-2 block'>
-                            {item.name}:
-                          </label>
-                          <div className="flex">
-                            <select
-                              name={item.name}
-                              id={item.id}
-                              className='appearance-none focus:outline-none border-gray-200 border-2 text-center px-2 cursor-pointer block w-60'
-                              onChange={(e) => setFieldValue(item.id, {
-                                ...(values as any)[item.id],
-                                value: e.target.value
-                              })}
-                            >
-                              <option value="" disabled selected>None</option>
-                              {item.items.map((i, index) => <option key={index} value={i.value}>{i.name}</option>)}
-                            </select>
-                            <input
-                              type='text'
-                              name="name"
-                              className='focus:outline-none border-gray-200 border-2 ml-3 w-3/4'
-                              onChange={(e) => setFieldValue(item.id, {
-                                ...(values as any)[item.id],
-                                text: e.target.value
-                              })}
-                            />
-                          </div>
-                        </div>
-                        
-                      </div>
-                    </div>
-                  ))}
+                    onBlur={handleBlur}
+                    value={values.description}
+                    placeholder='Xe buýt'
+                  />
+                  {errors.description && touched.description && (
+                    <p className='text-red-400'>{errors.description}</p>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-          <button type="submit" className="p-3 bg-cyan-400 hover:bg-cyan-500 transition-all text-white rounded-md m-auto w-60 block">Tạo sản phẩm</button>
+          <button
+            type='submit'
+            className='p-3 bg-cyan-400 hover:bg-cyan-500 transition-all text-white rounded-md m-auto w-60 block'
+          >
+            Tạo tour
+          </button>
         </form>
       </div>
     </div>
