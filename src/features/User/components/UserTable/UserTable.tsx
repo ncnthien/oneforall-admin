@@ -3,10 +3,10 @@ import { swal } from 'helper'
 
 const UserTable: React.FC<UserTableProps> = ({ users, toggleBlockUser }) => {
   const handleActionButtonClick = (user: User, userDisable: boolean) => () => {
-    const notiAction = userDisable ? 'mở khóa' : 'khóa'
+    const notiAction = userDisable ? 'khóa' : 'mở khóa'
     const notiText = userDisable
-      ? 'Hành động này sẽ cho phép người dùng đăng nhập vào hệ thống!'
-      : 'Hành động này sẽ ngăn chặn người dùng đăng nhập vào hệ thống!'
+      ? 'Hành động này sẽ ngăn chặn người dùng đăng nhập vào hệ thống!'
+      : 'Hành động này sẽ cho phép người dùng đăng nhập vào hệ thống!'
 
     swal
       .fire({
@@ -45,16 +45,16 @@ const UserTable: React.FC<UserTableProps> = ({ users, toggleBlockUser }) => {
             {user.isBlocked ? (
               <button
                 onClick={handleActionButtonClick(user, !user.isBlocked)}
-                className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'
+                className='bg-green-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-green-500 transition-all'
               >
-                Khóa
+                Mở khóa
               </button>
             ) : (
               <button
                 onClick={handleActionButtonClick(user, !user.isBlocked)}
-                className='bg-green-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-green-500 transition-all'
+                className='bg-red-400 text-white rounded py-2 px-3 inline-block text-sm hover:bg-red-500 transition-all'
               >
-                Mở khóa
+                Khóa
               </button>
             )}
           </td>
