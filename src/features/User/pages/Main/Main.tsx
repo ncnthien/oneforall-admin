@@ -39,12 +39,6 @@ const Main: React.FC = () => {
     fetchUsers()
   }, [])
 
-  const handleSearchUserTextChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchUserText(event.target.value)
-  }
-
   const handleToggleBlockUser = async ({
     user,
     userDisable,
@@ -58,7 +52,7 @@ const Main: React.FC = () => {
         swal.fire(
           'Xong!',
           `Tài khoản ${user.email} đã ${
-            userDisable ? 'được mở khóa' : 'bị khóa'
+            userDisable ? 'bị khóa' : 'được mở khóa'
           }!`,
           'success'
         )

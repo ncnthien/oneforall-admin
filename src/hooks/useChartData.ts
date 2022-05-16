@@ -4,7 +4,7 @@ import moment from 'moment'
 
 const API_URL = 'http://localhost:5000/api'
 
-const mapData = chartData => {
+const mapData = (chartData: any) => {
   const { statistics } = chartData
   const data = statistics.map(item => item.total)
   const labels = statistics.map(item =>
