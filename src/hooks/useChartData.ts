@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import moment from 'moment'
@@ -6,8 +7,8 @@ const API_URL = 'http://localhost:5000/api'
 
 const mapData = (chartData: any) => {
   const { statistics } = chartData
-  const data = statistics.map(item => item.total)
-  const labels = statistics.map(item =>
+  const data = statistics.map((item: any) => item.total)
+  const labels = statistics.map((item: any) =>
     moment().month(item.month).format('MMMM')
   )
 
@@ -17,7 +18,7 @@ const mapData = (chartData: any) => {
   }
 }
 
-export const useChartData = year => {
+export const useChartData = (year: number) => {
   const [chartData, setChartData] = useState({
     data: [],
     labels: [],
