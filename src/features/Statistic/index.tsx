@@ -13,7 +13,7 @@ const Statistic: React.FC = () => {
         exact={true}
         component={() => <Main />}
         layout={MainLayout}
-      ></PrivateRoute>
+      />
     </Switch>
   )
 }
